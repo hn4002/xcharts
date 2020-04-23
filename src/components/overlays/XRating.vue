@@ -38,7 +38,7 @@
 
         methods: {
             meta_info() {
-                return { author: 'MrHari', version: '2.0.0' }
+                return { author: 'X', version: '2.0.0' }
             },
             // Here goes your code. You are provided with:
             // { All stuff is reactive }

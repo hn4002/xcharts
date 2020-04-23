@@ -1,13 +1,8 @@
 <script>
     // XSpline is a copy of Spline with some modifications:
     // - debug statements for debugging during development
-    // - skip draw() if it is not required
     // - legend() method
     //
-    // Spline renderer. (SMAs, EMAs, TEMAs... you know what I mean)
-    // TODO: make a real spline, not a bunch of lines...
-
-    // Adds all necessary stuff for you.
     import { Overlay } from 'trading-vue-js'
 
     export default {
@@ -42,7 +37,7 @@
         },
         methods: {
             meta_info() {
-                return { author: 'C451, MrHari', version: '2.0.0' }
+                return { author: 'X', version: '2.0.0' }
             },
             // Here goes your code. You are provided with:
             // { All stuff is reactive }
@@ -63,12 +58,42 @@
             // ~
             // Finally, let's make the canvas dirty!
             draw(ctx) {
+
+                const i = this.data_index
+                const layout = this.$props.layout
+                const height = ctx.canvas.clientHeight
+
+                // Where am I right now?
+                let cursor = this.$props.cursor
+                if (cursor.x && cursor.y) {
+                    let cursorData = cursor.values[cursor.grid_id]
+                    let indicatorId = this.$props.id
+                    if (indicatorId in cursorData) {
+                        let p = cursorData[indicatorId]
+                        let y = layout.$2screen(p[i])
+                        // If y and cursor.y are close by, then we know that the mouse is hovering over the indicator
+                        let diffPct = 100.0 * Math.abs(y - cursor.y) / height
+                        if (diffPct < 2.0) {
+                            let v = document.getElementById(this.$props.id);
+                            if (v) {
+                                if (!v.classList.contains("highlight")) {
+                                    v.classList.add("highlight");
+                                }
+                            }
+                        } else { // Remove highlight
+                            let v = document.getElementById(this.$props.id);
+                            if (v) {
+                                if (v.classList.contains("highlight")) {
+                                    v.classList.remove("highlight");
+                                }
+                            }
+                        }
+                    }
+                }
+
                 ctx.lineWidth = this.line_width
                 ctx.strokeStyle = this.color
                 ctx.beginPath()
-
-                const layout = this.$props.layout
-                const i = this.data_index
 
                 //console.log("xspline.draw() called. this.$props.data.length = " + this.$props.data.length)
 

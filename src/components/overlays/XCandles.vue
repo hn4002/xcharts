@@ -15,7 +15,7 @@ export default {
     mixins: [Overlay],
     methods: {
         meta_info() {
-            return { author: 'C451', version: '1.2.0' }
+            return { author: 'X', version: '1.2.0' }
         },
         init() {
             //this.price = new Price(this) // TODO:
