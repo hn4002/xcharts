@@ -14,8 +14,8 @@ export default new Vuex.Store({
         currentTimeFrame: "daily",   // daily, weekly
 
         // Different selections
-        amdc: false,
-        esm: false,
+        amdc: true,
+        esm: true,
         trades: false,
     },
 

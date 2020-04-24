@@ -68,49 +68,50 @@
                 const yfactor = height / 100.0
                 //console.log("height, yfactor: ", height, yfactor)
 
-                // Where am I right now?
-                let cursor = this.$props.cursor
-                if (!cursor.x || !cursor.y) {
-                    //
-                } else {
+                // highlight the legend for this indicator if the mouse is close to the indicator (i.e. hovering over the indicator)
+                highlight: {
+                    let cursor = this.$props.cursor
+                    if (!cursor.x || !cursor.y) {
+                        break highlight;
+                    }
                     //console.log(cursor.x)
                     //console.log(cursor.y)
                     //console.log(cursor.y$)
                     let cursorData = cursor.values[cursor.grid_id]
                     let indicatorId = this.$props.id
                     //console.log(indicatorId, cursorData)
-                    if (indicatorId in cursorData) {
-                        let p = cursorData[indicatorId]
-                        let pY = Math.floor(height - p[1] * yfactor) - 0.5
-                        // If pY and cursor.y are close by, then we know that the mouse is hovering over the indicator
-                        let diffPct = 100.0 * Math.abs(pY - cursor.y) / height
-                        //console.log(p, pY, cursor.y, height, diffPct)
-                        if (diffPct < 2.0) {
-                            //console.log("=========> highlight ", this.$props.id)
-                            let v = document.getElementById(this.$props.id);
-                            if (v) {
-                                if (!v.classList.contains("highlight")) {
-                                    v.classList.add("highlight");
-                                }
-                            }
-                        } else { // Remove highlight
-                            //console.log("=========> remove highlight ", this.$props.id)
-                            let v = document.getElementById(this.$props.id);
-                            if (v) {
-                                if (v.classList.contains("highlight")) {
-                                    v.classList.remove("highlight");
-                                }
-                            }
+                    if (!(indicatorId in cursorData)) {
+                        break highlight;
+                    }
+                    let p = cursorData[indicatorId]
+                    if (!p || !p[1]) {
+                        break highlight;
+                    }
+                    let y = Math.floor(height - p[1] * yfactor) - 0.5
+                    // If pY and cursor.y are close by, then we know that the mouse is hovering over the indicator
+                    let diffPct = 100.0 * Math.abs(y - cursor.y) / height
+                    //console.log(p, y, cursor.y, height, diffPct)
+                    let v = document.getElementById(this.$props.id);
+                    if (!v) {
+                        break highlight;
+                    }
+                    if (diffPct < 2.0) {
+                        //console.log("=========> highlight ", this.$props.id)
+                        if (!v.classList.contains("highlight")) {
+                            v.classList.add("highlight");
+                        }
+                    } else { // Remove highlight
+                        //console.log("=========> remove highlight ", this.$props.id)
+                        if (v.classList.contains("highlight")) {
+                            v.classList.remove("highlight");
                         }
                     }
                 }
                 //console.log(cursor)
 
-
                 ctx.lineWidth = this.line_width
                 ctx.strokeStyle = this.color
                 ctx.beginPath()
-
 
                 //console.log(this)
                 //console.log("xrating.draw() called. $props.id = " + this.$props.id  + ". this.$props.data.length = " + this.$props.data.length)

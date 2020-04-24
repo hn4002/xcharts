@@ -63,30 +63,37 @@
                 const layout = this.$props.layout
                 const height = ctx.canvas.clientHeight
 
-                // Where am I right now?
-                let cursor = this.$props.cursor
-                if (cursor.x && cursor.y) {
+                // highlight the legend for this indicator if the mouse is close to the indicator (i.e. hovering over the indicator)
+                highlight: {
+                    let cursor = this.$props.cursor
+                    if (!cursor.x || !cursor.y) {
+                        break highlight;
+                    }
                     let cursorData = cursor.values[cursor.grid_id]
                     let indicatorId = this.$props.id
-                    if (indicatorId in cursorData) {
-                        let p = cursorData[indicatorId]
-                        let y = layout.$2screen(p[i])
-                        // If y and cursor.y are close by, then we know that the mouse is hovering over the indicator
-                        let diffPct = 100.0 * Math.abs(y - cursor.y) / height
-                        if (diffPct < 2.0) {
-                            let v = document.getElementById(this.$props.id);
-                            if (v) {
-                                if (!v.classList.contains("highlight")) {
-                                    v.classList.add("highlight");
-                                }
-                            }
-                        } else { // Remove highlight
-                            let v = document.getElementById(this.$props.id);
-                            if (v) {
-                                if (v.classList.contains("highlight")) {
-                                    v.classList.remove("highlight");
-                                }
-                            }
+                    if (!(indicatorId in cursorData)) {
+                        break highlight;
+                    }
+                    let p = cursorData[indicatorId]
+                    if (!p || !p[1]) {
+                        break highlight;
+                    }
+                    let y = layout.$2screen(p[i])
+                    // If y and cursor.y are close by, then we know that the mouse is hovering over the indicator
+                    let diffPct = 100.0 * Math.abs(y - cursor.y) / height
+                    let v = document.getElementById(this.$props.id);
+                    if (!v) {
+                        break highlight;
+                    }
+                    if (diffPct < 2.0) {
+                        //console.log("=========> highlight ", this.$props.id)
+                        if (!v.classList.contains("highlight")) {
+                            v.classList.add("highlight");
+                        }
+                    } else { // Remove highlight
+                        //console.log("=========> remove highlight ", this.$props.id)
+                        if (v.classList.contains("highlight")) {
+                            v.classList.remove("highlight");
                         }
                     }
                 }

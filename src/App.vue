@@ -2,13 +2,13 @@
 
     <div>
         <b-navbar toggleable="lg" type="light" variant="light">
-            <b-navbar-brand href="#"><span>X</span> <span>C</span>HARTS</b-navbar-brand>
+            <b-navbar-brand href="#"><span>X</span><span>C</span>HARTS</b-navbar-brand>
 
-            <b-nav-form>
+            <b-nav-form v-on:submit.prevent="symbolInputEntered">
                 <b-form-input v-model="symbolInputText" v-on:keyup.enter="symbolInputEntered" id="symbolInput" size="sm" class="mr-sm-2"></b-form-input>
                 <b-button-group>
-                    <b-button v-on:click="dailyButtonClicked" id="dailyButton" v-bind:variant="dailyButtonVariant" size="sm" class="my-2 my-sm-0" type="button">Daily</b-button>
-                    <b-button v-on:click="weeklyButtonClicked" id="weeklyButton" v-bind:variant="weeklyButtonVariant" size="sm" class="my-2 my-sm-0" type="button">Weekly</b-button>
+                    <b-button v-on:click="dailyButtonClicked" id="dailyButton" v-bind:variant="dailyButtonVariant" v-bind:class="{chartButtonActive: dailyActive}" size="sm" class="my-2 my-sm-0" type="button">Daily</b-button>
+                    <b-button v-on:click="weeklyButtonClicked" id="weeklyButton" v-bind:variant="weeklyButtonVariant" v-bind:class="{chartButtonActive: weeklyActive}" size="sm" class="my-2 my-sm-0" type="button">Weekly</b-button>
                 </b-button-group>
                 <b-button-group>
                     <b-button v-on:click="amdcButtonClicked" id="amdcButton" v-bind:variant="amdcButtonVariant" size="sm" class="my-2 my-sm-0 ml-3" type="button">AMDC</b-button>
@@ -32,7 +32,7 @@
 
                     <!-- b-nav-item href="#" >Market</b-nav-item -->
                     <b-nav-form>
-                        <b-button v-on:click="inspectButtonClicked" id="inspectButton" ref="inspectButton" size="sm" class="my-2 my-sm-2 ml-3" type="button"">Inspect</b-button>
+                        <b-button v-on:click="inspectButtonClicked" id="inspectButton" ref="inspectButton" size="sm" class="my-2 my-sm-2 ml-3" type="button">Inspect</b-button>
                     </b-nav-form>
 
                     <!--
@@ -68,7 +68,7 @@ export default {
     data() {
         return {
             test_index: 0,
-            symbolInputText: "AAPL",
+            symbolInputText: "PLMR",
             main_chart: MainChart,
             bus: new Vue(),
         }
@@ -90,6 +90,12 @@ export default {
         tradesButtonVariant() {
             return this.$store.state.trades? "danger" : "outline-danger"
         },
+        dailyActive() {
+            return this.$store.state.currentTimeFrame == "daily"
+        },
+        weeklyActive() {
+            return this.$store.state.currentTimeFrame == "weekly"
+        }
     },
 
     mounted() {
@@ -111,6 +117,17 @@ export default {
             this.$store.commit("updateTimeFrame", "daily")
 
             // Trigger reload of the chart
+            // this.symbolInputText is updated after an input event in the text box. The streamer-sidebar chrome extension
+            // uses jquery to update the text box -> $('#symbolInput').val(symbol); This does not trigger an input event,
+            // so this.symbolInputText does not get updated. After trying multiple ways to get this sorted out, finally
+            // we came to this solution where we just use direct javascript to read the value from the text box
+            let symbolInputActualValue = document.getElementById("symbolInput").value;
+            console.log("App::dailyButtonClicked:: symbolInputActualValue = ", symbolInputActualValue, "this.symbolInputText = ", this.symbolInputText)
+            if (this.symbolInputText != symbolInputActualValue) {
+                console.log("App::dailyButtonClicked:: Updating this.symbolInputText")
+                this.symbolInputText = symbolInputActualValue
+                console.log("App::dailyButtonClicked:: symbolInputActualValue = ", symbolInputActualValue, "this.symbolInputText = ", this.symbolInputText)
+            }
             this.bus.$emit('loadChartData', this.symbolInputText)
         },
 
@@ -121,31 +138,44 @@ export default {
             this.$store.commit("updateTimeFrame", "weekly")
 
             // Trigger reload of the chart
+            // See the comment on the dailyButtonClicked() on why we are using direct javascript below insted of vue way of doing things
+            let symbolInputActualValue = document.getElementById("symbolInput").value;
+            console.log("App::weeklyButtonClicked:: symbolInputActualValue = ", symbolInputActualValue, "this.symbolInputText = ", this.symbolInputText)
+            if (this.symbolInputText != symbolInputActualValue) {
+                console.log("App::weeklyButtonClicked:: Updating this.symbolInputText")
+                this.symbolInputText = symbolInputActualValue
+                console.log("App::weeklyButtonClicked:: symbolInputActualValue = ", symbolInputActualValue, "this.symbolInputText = ", this.symbolInputText)
+            }
             this.bus.$emit('loadChartData', this.symbolInputText)
         },
 
         amdcButtonClicked() {
             console.log("==> App::amdcButtonClicked clicked")
             this.$store.state.amdc = !this.$store.state.amdc
-            this.bus.$emit('refreshChart')
+            this.bus.$emit('showHideAmdc', this.$store.state.amdc)
         },
 
         esmButtonClicked() {
             console.log("==> App::esmButtonClicked clicked")
             this.$store.state.esm = !this.$store.state.esm
-            this.bus.$emit('refreshChart')
+            this.bus.$emit('showHideEsm', this.$store.state.esm)
         },
 
         tradesButtonClicked() {
             console.log("==> App::tradesButtonClicked clicked")
             this.$store.state.trades = !this.$store.state.trades
-            this.bus.$emit('refreshChart')
+            this.bus.$emit('showHideTrades', this.$store.state.trades)
         },
 
         inspectButtonClicked() {
             console.log("==> App::inspectButtonClicked clicked")
-            console.log("Symbol = " + this.$store.state.currentSymbol);
-            console.log("CompanyName = " + this.$store.state.currentCompanyName);
+            console.log("this.symbolInputText = " + this.symbolInputText);
+            console.log("this.$store.state.currentSymbol = " + this.$store.state.currentSymbol);
+            console.log("this.$store.state.currentCompanyName = " + this.$store.state.currentCompanyName);
+            console.log("this.$store.state.amdc = " + this.$store.state.amdc);
+            console.log("this.$store.state.esm = " + this.$store.state.esm);
+            console.log("this.$store.state.trades = " + this.$store.state.trades);
+            console.log("this.$store.state = " + this.$store.state);
         },
 
     },
@@ -161,6 +191,7 @@ document.addEventListener('click', function(e) {
     if(document.activeElement.toString() == '[object HTMLButtonElement]') {
         document.activeElement.blur();
     }
+    console.log(e);  // To avoid getting unused vars error during buid time
 });
 
 </script>

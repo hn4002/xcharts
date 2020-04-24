@@ -61,7 +61,13 @@ export default {
                 ctx.fillStyle = colors[p1[1]]
 
                 let x1 = layout.t2screen(p1[0]) - wOffset
-                let x2 = x1 + w
+                let x2 = x1 + w + 0.5
+
+                // If there is p2, then use it for x2
+                let p2 = this.$props.data[i+1]
+                if (p2) {
+                    x2 = layout.t2screen(p2[0]) - wOffset
+                }
 
                 // Background
                 ctx.beginPath()

@@ -3,7 +3,7 @@
          :overlays="overlays"
          :title-text="title"
          :toolbar="true"
-         :chartConfig="{TB_ICON_BRI: 1.9, DEFAULT_LEN: 150}"
+         :chartConfig="{TB_ICON_BRI: 1.9, DEFAULT_LEN: 200}"
          :colorBack="colors.white"
          :colorGrid="colors.lightGrey"
          :colorText="colors.textBlack"
@@ -24,10 +24,10 @@
 <script>
 
 import { TradingVue, DataCube} from 'trading-vue-js'
-import Data from '../../data/data.json'
+//import Data from '../../data/data.json'
 //import Overlays from 'tvjs-overlays'
 //import Grin from './Grin.vue'
-import PerfectTrades from './overlays/PerfectTrades.vue'
+//import PerfectTrades from './overlays/PerfectTrades.vue'
 import XAmdc from './overlays/XAmdc.vue'
 import XCandles from './overlays/XCandles.vue'
 import XSpline from './overlays/XSpline.vue'
@@ -48,6 +48,7 @@ export default {
                 chart: {
                     name: "NONE",
                     type: "XCandles",
+                    indexBased: true,
                     data: [],
                 },
                 onchart: [
@@ -159,7 +160,7 @@ export default {
                 blue: '#4D8AEE',
                 lightBlue: '#5891EF',
                 pinkishRed: '#DA525F',
-                green: '#58998F',
+                green2: '#58998F',
             },
             buttons: [
                 'display', 'up'
@@ -178,7 +179,11 @@ export default {
         }, 0)
         this.onResize()
         this.bus.$on('loadChartData', this.loadChartData)
-        //this.bus.$on('refreshChart', this.refreshChart)
+        this.bus.$on('refreshChart', this.refreshChart)
+        this.bus.$on('showHideAmdc', this.showHideAmdc)
+        this.bus.$on('showHideEsm', this.showHideEsm)
+        this.bus.$on('showHideTrades', this.showHideTrades)
+
     },
 
     beforeDestroy() {
@@ -189,6 +194,7 @@ export default {
         onResize(event) {
             this.width = window.innerWidth
             this.height = window.innerHeight - 56
+            console.log(event) // This is to avoid getting unused variable error during build time
         },
 
         onLegendButtonClick(event) {
@@ -198,15 +204,29 @@ export default {
                 let d = this.chart.data[event.type][event.dataIndex]
                 if (d) {
                     if (!('display' in d.settings)) {
-                        this.$set(
-                            d.settings, 'display', true
+                        this.$set(d.settings, 'display', true
                         )
                     }
-                    this.$set(
-                        d.settings, 'display', !d.settings.display
+                    this.$set(d.settings, 'display', !d.settings.display
                     )
                 }
             }
+        },
+
+        showHideAmdc(displayVal) {
+            this.chart.merge('onchart.XAmdc0.settings', {display: displayVal})
+        },
+
+        showHideEsm(displayVal) {
+            this.chart.merge('onchart.XRating0.settings', {display: displayVal})
+            this.chart.merge('onchart.XRating1.settings', {display: displayVal})
+            this.chart.merge('onchart.XRating2.settings', {display: displayVal})
+            this.chart.merge('onchart.XRating3.settings', {display: displayVal})
+            this.chart.merge('onchart.XRating4.settings', {display: displayVal})
+        },
+
+        showHideTrades(displayVal) {
+            this.chart.merge('onchart.XTrades0.settings', {display: displayVal})
         },
 
         async loadChartData(symbol) {
@@ -227,16 +247,13 @@ export default {
             var result = response.result
             var priceData = []
             for (var i = 0; i < result.length; i++) {
-                var entry = result[i]
                 var ohlc = []
-                var s = entry[0]
-                var dateStr = s[0] + s[1] + s[2] + s[3] + "-" + s[4] + s[5] + "-" + s[6] + s[7]
-                ohlc[0] = new Date(dateStr).getTime()
-                ohlc[1] = parseFloat(entry[1])
-                ohlc[2] = parseFloat(entry[2])
-                ohlc[3] = parseFloat(entry[3])
-                ohlc[4] = parseFloat(entry[4])
-                ohlc[5] = parseInt(entry[5])
+                ohlc[0] = new Date(result[i][0]).getTime()
+                ohlc[1] = result[i][1]
+                ohlc[2] = result[i][2]
+                ohlc[3] = result[i][3]
+                ohlc[4] = result[i][4]
+                ohlc[5] = result[i][5]
                 priceData.push(ohlc)
             }
             //console.log(priceData);
@@ -257,7 +274,7 @@ export default {
             this.chart.set('onchart.XSpline0.data', emaData)
 
             // Calculate 50 day EMA
-            var emaData = this.calulateEma(50, priceData)
+            emaData = this.calulateEma(50, priceData)
             // console.log("MainChart::loadPriceData emaData", emaData)
             this.chart.set('onchart.XSpline1.data', emaData)
 
@@ -299,9 +316,7 @@ export default {
                 return
             }
             for (var i = 0; i < result.length; i++) {
-                var s = result[i][0]
-                var dateStr = s[0] + s[1] + s[2] + s[3] + "-" + s[4] + s[5] + "-" + s[6] + s[7]
-                result[i][0] = new Date(dateStr).getTime()
+                result[i][0] = new Date(result[i][0]).getTime()
             }
             //console.log("MainChart::loadAmdcData result2", result)
             this.chart.set('onchart.XAmdc0.data', result)
