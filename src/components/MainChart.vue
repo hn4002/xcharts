@@ -1,9 +1,9 @@
 <template>
     <trading-vue :data="chart" ref="tradingVue" :width="this.width" :height="this.height"
+         title-text="title"
          :overlays="overlays"
-         :title-text="title"
          :toolbar="true"
-         :chartConfig="{TB_ICON_BRI: 1.9, DEFAULT_LEN: 200}"
+         :chartConfig="{TB_ICON_BRI: 1.9, DEFAULT_LEN: 50}"
          :colorBack="colors.white"
          :colorGrid="colors.lightGrey"
          :colorText="colors.textBlack"
@@ -30,6 +30,7 @@ import { TradingVue, DataCube} from 'trading-vue-js'
 //import PerfectTrades from './overlays/PerfectTrades.vue'
 import XAmdc from './overlays/XAmdc.vue'
 import XCandles from './overlays/XCandles.vue'
+import XOhlcBars from './overlays/XOhlcBars.vue'
 import XSpline from './overlays/XSpline.vue'
 import XRating from './overlays/XRating.vue'
 
@@ -47,7 +48,7 @@ export default {
             chart: new DataCube({
                 chart: {
                     name: "NONE",
-                    type: "XCandles",
+                    type: "XOhlcBars",
                     indexBased: true,
                     data: [],
                 },
@@ -165,7 +166,7 @@ export default {
             buttons: [
                 'display', 'up'
             ],
-            overlays: [XAmdc, XCandles, XSpline, XRating],
+            overlays: [XAmdc, XCandles, XOhlcBars, XSpline, XRating],
             title: "ABCD",
         }
     },
