@@ -17,7 +17,13 @@ export default new Vuex.Store({
             candle: {
                 upCandleHollow: true,
                 lineWidth: 1,
-            }
+            },
+            pricechart: {
+                upBarColor: "#273EE0",
+                downBarColor: "#CE46AA",
+                barWidth: 2,
+                hlcOnly: true,
+            },
         },
 
         // Different selections
