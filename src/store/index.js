@@ -32,6 +32,8 @@ export default new Vuex.Store({
         trades: false,
     },
 
+    // Vuex getters is to Vue computed as Vuex state is to Vue data.
+    // If information involves some derivation or computation, then use getters. The computed results are cached.
     getters: {},
 
     /**

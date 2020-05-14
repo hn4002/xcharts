@@ -13,7 +13,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App.vue';
 
-new Vue({
+// add you new Vue object to a variable
+const vueapp = new Vue({
     store,
     el: '#app',
     render: h => h(App)

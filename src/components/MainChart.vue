@@ -3,7 +3,7 @@
          title-text="title"
          :overlays="overlays"
          :toolbar="true"
-         :chartConfig="{TB_ICON_BRI: 1.9, DEFAULT_LEN: 300}"
+         :chartConfig="{TB_ICON_BRI: 1.9, DEFAULT_LEN: 220}"
          :colorBack="colors.white"
          :colorGrid="colors.lightGrey"
          :colorText="colors.textBlack"
