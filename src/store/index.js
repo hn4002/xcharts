@@ -13,6 +13,13 @@ export default new Vuex.Store({
 
         currentTimeFrame: "daily",   // daily, weekly
 
+        settings: {
+            candle: {
+                upCandleHollow: true,
+                lineWidth: 1,
+            }
+        },
+
         // Different selections
         amdc: true,
         esm: true,

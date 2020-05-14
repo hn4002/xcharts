@@ -99,7 +99,16 @@ export default {
         colorVolDw() {
             return this.sett.colorVolDw ||
                 this.$props.colors.colorVolDw
+        },
+        upCandleHollow() {
+            return 'upCandleHollow' in this.$store.state.settings.candle ?
+                this.$store.state.settings.candle.upCandleHollow : false
+        },
+        lineWidth() {
+            return 'lineWidth' in this.$store.state.settings.candle ?
+                this.$store.state.settings.candle.lineWidth : 1
         }
+
     },
     data() {
         return { price: {} }
