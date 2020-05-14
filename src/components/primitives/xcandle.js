@@ -7,11 +7,11 @@ export default class XCandle {
         this.ctx = ctx
         this.self = overlay
         this.style = data.raw[6] || this.self
-        this.draw(data)
+        this._draw(data)
     }
 
-    draw(data) {
-        // Wick width = 1 or 2?
+    _draw(data) {
+        // Line width = 1 or 2?
         const line_width = this.style.lineWidth
         const up_hollow = this.style.upCandleHollow
 
