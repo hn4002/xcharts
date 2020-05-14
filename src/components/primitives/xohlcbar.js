@@ -14,6 +14,7 @@ export default class XOhlcBar {
 
         const line_width = this.style.barWidth
         const hlc_only = this.style.hlcOnly
+        const line_width_half = line_width / 2
 
         // Bar color
         const bar_color = data.c <= data.o ?
@@ -24,8 +25,6 @@ export default class XOhlcBar {
         let halfwidth = Math.max(Math.floor(width * 0.5), 1)
         let height = Math.abs(data.o - data.c)
         let max_h = data.c === data.o ? 1 : 2
-
-        let line_width_half = line_width / 2
 
         // Draw the line from low to high and open and close also
         this.ctx.strokeStyle = bar_color

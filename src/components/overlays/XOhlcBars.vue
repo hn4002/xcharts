@@ -3,7 +3,8 @@
     // It can be used as the main chart or an indicator
 
     import XOhlcBar from '../primitives/xohlcbar.js'
-    import { Overlay, layout_cnv, Volbar } from 'trading-vue-js'
+    import XVolbar from '../primitives/xvolbar.js'
+    import { Overlay, layout_cnv } from 'trading-vue-js'
 
     export default {
         name: 'XOhlcBars',
@@ -31,8 +32,10 @@
                 }
 
                 if (this.show_volume) {
-                    for (var volumeData of cnv.volume) {
-                        new Volbar(this, ctx, volumeData)
+                    for (let i = 0; i < cnv.volume.length; i++) {
+                        let volumeData = cnv.volume[i]
+                        let barData = cnv.ohlcbars[i]
+                        new XVolbar(this, ctx, volumeData, barData)
                     }
                 }
 
@@ -66,13 +69,14 @@
                 return 'priceLine' in this.sett ?
                     this.sett.priceLine : true
             },
-            colorVolUp() {
-                return this.sett.colorVolUp ||
-                    this.$props.colors.colorVolUp
+            upVolBarColor() {
+                return this.$store.state.settings.pricechart.upBarColor || "#007700"
             },
-            colorVolDw() {
-                return this.sett.colorVolDw ||
-                    this.$props.colors.colorVolDw
+            downVolBarColor() {
+                return this.$store.state.settings.pricechart.downBarColor || "#A70000"
+            },
+            volBarWidth() {
+                return this.$store.state.settings.pricechart.barWidth || 2
             },
             upBarColor() {
                 return this.$store.state.settings.pricechart.upBarColor || "#007700"
