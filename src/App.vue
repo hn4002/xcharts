@@ -68,7 +68,7 @@ export default {
     data() {
         return {
             test_index: 0,
-            symbolInputText: "PLMR",
+            symbolInputText: this.$store.state.currentSymbol ||  "PLMR",
             main_chart: MainChart,
             bus: new Vue(),
         }

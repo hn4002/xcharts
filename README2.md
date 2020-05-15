@@ -67,10 +67,10 @@ Add to src/main.js:
     npm install bootstrap-vue bootstrap --save
 
 
-## Add vuex
+## Add vuex and vuex-persist
 
     npm install vuex --save
-    
+    npm install --save vuex-persist
 
 ## Use Local trading-vue-js ##
 
