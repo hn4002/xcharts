@@ -14,19 +14,21 @@ export default class XCandle {
         // Line width = 1 or 2?
         const line_width = this.style.lineWidth
         const up_hollow = this.style.upCandleHollow
+        //console.log("line_width", line_width)
+        //console.log("up_hollow", up_hollow)
 
-        // body color
+        // bar color
         const body_color = data.c <= data.o ?
-            this.style.colorCandleUp :
-            this.style.colorCandleDw
+            this.style.upBarColor :
+            this.style.downBarColor
 
         // wick color
         const wick_color = data.c <= data.o ?
-            this.style.colorWickUp :
-            this.style.colorWickDw
+            this.style.upBarColor :
+            this.style.downBarColor
 
         // what is this?
-        const wick_color_sm = this.style.colorWickSm
+        const wick_color_sm = this.style.upBarColor
 
         let width = Math.max(data.w, 1)
         let halfwidth = Math.max(Math.floor(width * 0.5), 1)

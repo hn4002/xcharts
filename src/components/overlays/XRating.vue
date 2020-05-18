@@ -33,7 +33,10 @@
             },
             data_index() {
                 return this.sett.dataIndex || 1
-            }
+            },
+            highlight() {
+                return this.sett.highlight || false
+            },
         },
 
         methods: {
@@ -68,6 +71,7 @@
                 const yfactor = height / 100.0
                 //console.log("height, yfactor: ", height, yfactor)
 
+                let highlight = this.highlight
                 // highlight the legend for this indicator if the mouse is close to the indicator (i.e. hovering over the indicator)
                 highlight: {
                     let cursor = this.$props.cursor
@@ -91,17 +95,20 @@
                     // If pY and cursor.y are close by, then we know that the mouse is hovering over the indicator
                     let diffPct = 100.0 * Math.abs(y - cursor.y) / height
                     //console.log(p, y, cursor.y, height, diffPct)
-                    let v = document.getElementById(this.$props.id);
-                    if (!v) {
-                        break highlight;
-                    }
-                    if (diffPct < 2.0) {
+                   if (diffPct < 2.0) {
                         //console.log("=========> highlight ", this.$props.id)
+                        highlight = true
+                    } else { // Remove highlight
+                        //console.log("=========> remove highlight ", this.$props.id)
+                    }
+                }
+                let v = document.getElementById(this.$props.id);
+                if (v) {
+                    if (highlight) {
                         if (!v.classList.contains("highlight")) {
                             v.classList.add("highlight");
                         }
                     } else { // Remove highlight
-                        //console.log("=========> remove highlight ", this.$props.id)
                         if (v.classList.contains("highlight")) {
                             v.classList.remove("highlight");
                         }
@@ -109,7 +116,18 @@
                 }
                 //console.log(cursor)
 
-                ctx.lineWidth = this.line_width
+                // Set the legend color. hack. do something better.
+                document.getElementById(this.$props.id).style.color = this.color
+
+                if (highlight) {
+                    ctx.lineWidth = this.line_width * 2
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                    ctx.shadowBlur = 2;
+                    ctx.shadowColor = '#FFF933';
+                } else {
+                    ctx.lineWidth = this.line_width
+                }
                 ctx.strokeStyle = this.color
                 ctx.beginPath()
 
@@ -119,6 +137,7 @@
                 for (let p of this.$props.data) {
                     let x = layout.t2screen(p[0])
                     let y = Math.floor(height - p[1] * yfactor) - 0.5
+                    //console.log(p[0], p[1], x, y)
 
                     ctx.lineTo(x, y)
                 }
@@ -143,9 +162,14 @@
             // Defines legend format (values & colors)
             // Take a look at Trades.vue for an example
             legend(values) {
+                //console.log(values)
+                let displayText = values[1].toFixed(0)
+                if (values.length >= 3) {
+                    displayText = displayText + " " + values[2]
+                }
                 return [
                     {
-                        value: values[1].toFixed(0),
+                        value: displayText,
                         color: this.color,
                     }
                 ]

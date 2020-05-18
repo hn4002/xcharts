@@ -33,7 +33,10 @@
             },
             data_index() {
                 return this.sett.dataIndex || 1
-            }
+            },
+            highlight() {
+                return this.sett.highlight || false
+            },
         },
         methods: {
             meta_info() {
@@ -63,6 +66,7 @@
                 const layout = this.$props.layout
                 const height = ctx.canvas.clientHeight
 
+                let highlight = this.highlight
                 // highlight the legend for this indicator if the mouse is close to the indicator (i.e. hovering over the indicator)
                 highlight: {
                     let cursor = this.$props.cursor
@@ -81,24 +85,38 @@
                     let y = layout.$2screen(p[i])
                     // If y and cursor.y are close by, then we know that the mouse is hovering over the indicator
                     let diffPct = 100.0 * Math.abs(y - cursor.y) / height
-                    let v = document.getElementById(this.$props.id);
-                    if (!v) {
-                        break highlight;
-                    }
                     if (diffPct < 2.0) {
                         //console.log("=========> highlight ", this.$props.id)
+                        highlight = true
+                    } else { // Remove highlight
+                        //console.log("=========> remove highlight ", this.$props.id)
+                    }
+                }
+                let v = document.getElementById(this.$props.id);
+                if (v) {
+                    if (highlight) {
                         if (!v.classList.contains("highlight")) {
                             v.classList.add("highlight");
                         }
                     } else { // Remove highlight
-                        //console.log("=========> remove highlight ", this.$props.id)
                         if (v.classList.contains("highlight")) {
                             v.classList.remove("highlight");
                         }
                     }
                 }
 
-                ctx.lineWidth = this.line_width
+                // Set the legend color. hack. do something better.
+                document.getElementById(this.$props.id).style.color = this.color
+
+                if (highlight) {
+                    ctx.lineWidth = this.line_width * 2
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                    ctx.shadowBlur = 2;
+                    ctx.shadowColor = '#FFF933';
+                } else {
+                    ctx.lineWidth = this.line_width
+                }
                 ctx.strokeStyle = this.color
                 ctx.beginPath()
 

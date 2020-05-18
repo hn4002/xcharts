@@ -12,8 +12,8 @@ export default class XOhlcBar {
 
     _draw(data) {
 
-        const line_width = this.style.barWidth
-        const hlc_only = this.style.hlcOnly
+        const line_width = this.style.lineWidth
+        const hlc_only = (this.style.chartType == "HLC")
         const line_width_half = line_width / 2
 
         // Bar color

@@ -5,7 +5,7 @@
             <b-navbar-brand href="#"><span>X</span><span>C</span>HARTS</b-navbar-brand>
 
             <b-nav-form v-on:submit.prevent="symbolInputEntered">
-                <b-form-input v-model="symbolInputText" v-on:keyup.enter="symbolInputEntered" id="symbolInput" size="sm" class="mr-sm-2"></b-form-input>
+                <b-form-input v-model="symbolInputText" v-on:keyup.enter="symbolInputEntered" v-uppercase id="symbolInput" size="sm" class="mr-sm-2"></b-form-input>
                 <b-button-group>
                     <b-button v-on:click="dailyButtonClicked" id="dailyButton" v-bind:variant="dailyButtonVariant" v-bind:class="{chartButtonActive: dailyActive}" size="sm" class="my-2 my-sm-0" type="button">Daily</b-button>
                     <b-button v-on:click="weeklyButtonClicked" id="weeklyButton" v-bind:variant="weeklyButtonVariant" v-bind:class="{chartButtonActive: weeklyActive}" size="sm" class="my-2 my-sm-0" type="button">Weekly</b-button>
@@ -68,7 +68,7 @@ export default {
     data() {
         return {
             test_index: 0,
-            symbolInputText: this.$store.state.currentSymbol ||  "PLMR",
+            symbolInputText: this.$store.state.currentSymbol ||  "TEAM",
             main_chart: MainChart,
             bus: new Vue(),
         }
@@ -181,6 +181,22 @@ export default {
     },
  };
 
+// Vue Directives
+
+Vue.directive('uppercase', {
+    /*update (el) {
+        console.log("vue directive: uppercase")
+        el.value = el.value.toUpperCase()
+    },*/
+    inserted: function(el, _, vnode) {
+        el.addEventListener('input', async function(e) {
+            console.log("In thei nput")
+            e.target.value = e.target.value.toUpperCase()
+            vnode.componentInstance.$emit('input', e.target.value.toUpperCase())
+        })
+    },
+})
+
 //
 // Some plain old Javascript code for "advanced" features
 //
@@ -206,16 +222,41 @@ body {
 }
 
 
+.trading-vue-legend {
+    background-color: white;
+    border: #9b9ca0 1px solid;
+}
+
+
+/*
+.t-vue-ind,
+.t-vue-iname,
+.t-vue-lbtn-grp,
+.t-vue-ivalues,
+.trading-vue-ohlcv {
+    margin-bottom: 0px;
+    padding-bottom: 0.5em;
+}
+*/
+
+/*
+.t-vue-indicators,
 .t-vue-iname,
 .t-vue-lbtn-grp,
 .t-vue-ivalues,
 .trading-vue-ohlcv {
     background-color: white;
 }
+*/
+
+.t-vue-lbtn {
+    margin-bottom: 0px;
+}
 
 .highlight {
-    color: white;
-    text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+    /*color: #ffff00;*/
+    /*text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;   #fcf8e3;*/
+    background-color: #fff3cd;
 }
 
 .highlight1 {

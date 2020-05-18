@@ -29,8 +29,7 @@ import { TradingVue, DataCube} from 'trading-vue-js'
 //import Grin from './Grin.vue'
 //import PerfectTrades from './overlays/PerfectTrades.vue'
 import XAmdc from './overlays/XAmdc.vue'
-import XCandles from './overlays/XCandles.vue'
-import XOhlcBars from './overlays/XOhlcBars.vue'
+import XPriceBars from './overlays/XPriceBars.vue'
 import XSpline from './overlays/XSpline.vue'
 import XRating from './overlays/XRating.vue'
 
@@ -48,7 +47,7 @@ export default {
             chart: new DataCube({
                 chart: {
                     name: "NONE",
-                    type: "XOhlcBars",
+                    type: "XPriceBars",
                     indexBased: true,
                     data: [],
                 },
@@ -166,7 +165,7 @@ export default {
             buttons: [
                 'display', 'up'
             ],
-            overlays: [XAmdc, XCandles, XOhlcBars, XSpline, XRating],
+            overlays: [XAmdc, XPriceBars, XSpline, XRating],
             title: "ABCD",
         }
     },
@@ -205,11 +204,18 @@ export default {
                 let d = this.chart.data[event.type][event.dataIndex]
                 if (d) {
                     if (!('display' in d.settings)) {
-                        this.$set(d.settings, 'display', true
-                        )
+                        this.$set(d.settings, 'display', true)
                     }
-                    this.$set(d.settings, 'display', !d.settings.display
-                    )
+                    this.$set(d.settings, 'display', !d.settings.display)
+                }
+            }
+            if (event.button === 'up') {
+                let d = this.chart.data[event.type][event.dataIndex]
+                if (d) {
+                    if (!('highlight' in d.settings)) {
+                        this.$set(d.settings, 'highlight', false)
+                    }
+                    this.$set(d.settings, 'highlight', !d.settings.highlight)
                 }
             }
         },
@@ -246,6 +252,7 @@ export default {
             var response = (await fetch(url).then(response => response.json()))
             //console.log(response)
             var result = response.result
+
             var priceData = []
             for (var i = 0; i < result.length; i++) {
                 var ohlc = []
@@ -303,24 +310,31 @@ export default {
         async loadAmdcData() {
             // https://streamer.hnsib.net/streamer/api/amdc/?timeFrame=daily
             console.log("MainChart::loadAmdcData() called")
-            var timeFrame = this.$store.state.currentTimeFrame
-            var url = "https://streamer.hnsib.net/streamer/api/amdc/?timeFrame=" + timeFrame
+            let timeFrame = this.$store.state.currentTimeFrame
+            let url = "https://streamer.hnsib.net/streamer/api/amdc/?timeFrame=" + timeFrame
             console.log("MainChart::loadAmdcData ", url)
-            var response = (await fetch(url).then(response => response.json()))
+            let response = (await fetch(url).then(response => response.json()))
             console.log("MainChart::loadAmdcData response", response)
-            var result = response.result
+            let result = response.result
             //console.log("MainChart::loadAmdcData result", result)
-
             //console.log(this.chart.get('onchart'))
 
-            if (result == null) {
-                return
-            }
-            for (var i = 0; i < result.length; i++) {
-                result[i][0] = new Date(result[i][0]).getTime()
+            let dateMap = this.$store.state.dateMap
+            let amdcData = []
+            if (result != null) {
+                for (var i = 0; i < result.length; i++) {
+                    let amdcOne = result[i]
+                    amdcOne[0] = new Date(amdcOne[0]).getTime()
+                    // Only add those entries which are there in the price data
+                    if (dateMap.has(amdcOne[0])) {
+                        amdcData.push(amdcOne)
+                    } else {
+                        console.log("Ignoring...", amdcOne)
+                    }
+                }
             }
             //console.log("MainChart::loadAmdcData result2", result)
-            this.chart.set('onchart.XAmdc0.data', result)
+            this.chart.set('onchart.XAmdc0.data', amdcData)
         },
 
         async loadRatingsData(symbol) {
@@ -334,31 +348,27 @@ export default {
 
             console.log(this.chart.get('onchart'))
 
-            if (result == null) {
-                return
-            }
-            var cr = []
-            var er = []
-            var rr = []
-            var ad = []
-            var smr = []
-            for (var i = 0; i < result.length; i++) {
-                var date = new Date(result[i][0]).getTime()
-                cr[i] = []
-                cr[i][0] = date
-                cr[i][1] = result[i][1]
-                er[i] = []
-                er[i][0] = date
-                er[i][1] = result[i][2]
-                rr[i] = []
-                rr[i][0] = date
-                rr[i][1] = result[i][3]
-                ad[i] = []
-                ad[i][0] = date
-                ad[i][1] = result[i][4]
-                smr[i] = []
-                smr[i][0] = date
-                smr[i][1] = result[i][5]
+            let dateMap = this.$store.state.dateMap
+            let cr = [], er = [], rr = [], ad = [], smr = []
+            if (result != null) {
+                for (var i = 0; i < result.length; i++) {
+                    var date = new Date(result[i][0]).getTime()
+                    let crOne = new Array(date, result[i][1])
+                    let erOne = new Array(date, result[i][2])
+                    let rrOne = new Array(date, result[i][3])
+                    let adOne = new Array(date, result[i][4], result[i][5])
+                    let smrOne = new Array(date, result[i][6], result[i][7])
+                    // Only add those entries which are there in the price data
+                    if (dateMap.has(date)) {
+                        cr.push(crOne)
+                        er.push(erOne)
+                        rr.push(rrOne)
+                        ad.push(adOne)
+                        smr.push(smrOne)
+                    } else {
+                        console.log("Ignoring... ", crOne, erOne, rrOne, adOne, smrOne)
+                    }
+                }
             }
             //console.log("MainChart::loadRatingsData cr", cr)
             //console.log("MainChart::loadRatingsData er", er)
