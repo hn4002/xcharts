@@ -28,10 +28,10 @@ import { TradingVue, DataCube} from 'trading-vue-js'
 //import Overlays from 'tvjs-overlays'
 //import Grin from './Grin.vue'
 //import PerfectTrades from './overlays/PerfectTrades.vue'
-import XAmdc from './overlays/XAmdc.vue'
-import XPriceBars from './overlays/XPriceBars.vue'
-import XSpline from './overlays/XSpline.vue'
-import XRating from './overlays/XRating.vue'
+import XAmdc from '../overlays/XAmdc.vue'
+import XPriceBars from '../overlays/XPriceBars.vue'
+import XSpline from '../overlays/XSpline.vue'
+import XRating from '../overlays/XRating.vue'
 
 export default {
     name: 'MainChart',

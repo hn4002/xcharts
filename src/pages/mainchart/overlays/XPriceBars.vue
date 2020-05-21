@@ -34,7 +34,7 @@
 
                 let BarRenderer = XOhlcBar
                 let thinVolumeBar = true
-                if (this.chartType == "Candle") {
+                if (this.chartType == "Candle" || this.chartType == "Candles" || this.chartType == "XCandle" || this.chartType == "XCandles") {
                     BarRenderer = XCandle
                     thinVolumeBar = false
                 }

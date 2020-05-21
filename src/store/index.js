@@ -31,8 +31,8 @@ As a reference, check out the Shopping Cart Example - https://github.com/vuejs/v
 //Application-level state is centralized in the store.
 export default new Vuex.Store({
     state: {
-        currentSymbol: "",
-        currentCompanyName: "",
+        currentSymbol: "TEAM",
+        currentCompanyName: "TEAM",
         ohlc: [],
         dateMap: new Map(),
 
@@ -47,6 +47,15 @@ export default new Vuex.Store({
                 upCandleHollow: true,
                 showVolume: true,
             },
+        },
+
+        markups: {
+            screen: {
+
+            },
+            chart: {
+
+            }
         },
 
         // Different selections
@@ -90,6 +99,18 @@ export default new Vuex.Store({
                 state.currentTimeFrame = "daily"
             }
         },
+
+        /**
+         * Save Settings
+         */
+        saveSettings(state, newSettings) {
+            state.settings.pricechart.chartType = newSettings.chartType
+            state.settings.pricechart.upBarColor = newSettings.upBarColor
+            state.settings.pricechart.downBarColor = newSettings.downBarColor
+            state.settings.pricechart.lineWidth = newSettings.lineWidth
+            state.settings.pricechart.upCandleHollow = newSettings.upCandleHollow
+            state.settings.pricechart.showVolume = newSettings.showVolume
+        }
     },
 
     //

@@ -72,6 +72,10 @@ Add to src/main.js:
     npm install vuex --save
     npm install --save vuex-persist
 
+## Add vue-router
+
+    npm i vue-router --save
+
 ## Use Local trading-vue-js ##
 
 Use local copy of trading-vue-js instead of the one in repo.
