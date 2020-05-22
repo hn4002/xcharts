@@ -36,7 +36,6 @@ import XRating from '../overlays/XRating.vue'
 export default {
     name: 'MainChart',
     //description: 'Main Chart',
-    props: ['bus'],
     components: {
         TradingVue
     },
@@ -178,11 +177,11 @@ export default {
             //this.$set(this, 'chart', new DataCube())
         }, 0)
         this.onResize()
-        this.bus.$on('loadChartData', this.loadChartData)
-        this.bus.$on('refreshChart', this.refreshChart)
-        this.bus.$on('showHideAmdc', this.showHideAmdc)
-        this.bus.$on('showHideEsm', this.showHideEsm)
-        this.bus.$on('showHideTrades', this.showHideTrades)
+        this.$xEventBus.$on('loadChartData', this.loadChartData)
+        this.$xEventBus.$on('refreshChart', this.refreshChart)
+        this.$xEventBus.$on('showHideAmdc', this.showHideAmdc)
+        this.$xEventBus.$on('showHideEsm', this.showHideEsm)
+        this.$xEventBus.$on('showHideTrades', this.showHideTrades)
 
     },
 

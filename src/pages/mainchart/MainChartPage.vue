@@ -1,10 +1,9 @@
 <template>
 
     <div>
-        <Header :bus="bus"></Header>
+        <Header></Header>
         <SettingsModal></SettingsModal>
-        <MainChart :bus="bus" id="tv-container"></MainChart>
-<!--        <SettingsPanel></SettingsPanel>-->
+        <MainChart id="tv-container"></MainChart>
     </div>
 
 
@@ -12,30 +11,26 @@
 
 <script>
 
-    import Vue from 'vue';
     import MainChart from "./components/MainChart.vue";
     import Header from "./components/Header.vue";
     import SettingsModal from "./components/SettingsModal.vue";
-    import SettingsPanel from "./components/SettingsPanel.vue";
 
     export default {
         name: 'MainChartPage',
         components: {
-            SettingsPanel,
             Header,
-            SettingsModal,
             MainChart,
+            SettingsModal,
         },
         data() {
             return {
                 main_chart: MainChart,
-                bus: new Vue(),
             }
         },
 
         mounted() {
             this.main_chart = MainChart
-            this.bus.$emit('loadChartData', this.$store.state.currentSymbol)
+            this.$xEventBus.$emit('loadChartData', this.$store.state.currentSymbol)
             console.log(this.$store.state.currentSymbol, this.$store.state.currentCompanyName)
         },
 
@@ -88,10 +83,6 @@
     .highlight {
         /*color: #ffff00;*/
         /*text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;   #fcf8e3;*/
-        background-color: #fff3cd;
-    }
-
-    .highlight1 {
-        background-color: yellow;
+        background-color: #fff3cd; /*yellow;*/
     }
 </style>

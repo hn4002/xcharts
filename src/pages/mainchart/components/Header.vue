@@ -55,8 +55,6 @@
         components: {
         },
 
-        props: ['bus'],
-
         data() {
             return {
                 symbolInputText: this.$store.state.currentSymbol,
@@ -90,7 +88,7 @@
         methods: {
             symbolInputEntered() {
                 console.log("==> Header::symbolInputEntered: " + this.symbolInputText)
-                this.bus.$emit('loadChartData', this.symbolInputText)
+                this.$xEventBus.$emit('loadChartData', this.symbolInputText)
             },
 
             dailyButtonClicked() {
@@ -111,7 +109,7 @@
                     this.symbolInputText = symbolInputActualValue
                     console.log("Header::dailyButtonClicked:: symbolInputActualValue = ", symbolInputActualValue, "this.symbolInputText = ", this.symbolInputText)
                 }
-                this.bus.$emit('loadChartData', this.symbolInputText)
+                this.$xEventBus.$emit('loadChartData', this.symbolInputText)
             },
 
             weeklyButtonClicked() {
@@ -129,25 +127,25 @@
                     this.symbolInputText = symbolInputActualValue
                     console.log("Header::weeklyButtonClicked:: symbolInputActualValue = ", symbolInputActualValue, "this.symbolInputText = ", this.symbolInputText)
                 }
-                this.bus.$emit('loadChartData', this.symbolInputText)
+                this.$xEventBus.$emit('loadChartData', this.symbolInputText)
             },
 
             amdcButtonClicked() {
                 console.log("==> Header::amdcButtonClicked clicked")
                 this.$store.state.amdc = !this.$store.state.amdc
-                this.bus.$emit('showHideAmdc', this.$store.state.amdc)
+                this.$xEventBus.$emit('showHideAmdc', this.$store.state.amdc)
             },
 
             esmButtonClicked() {
                 console.log("==> Header::esmButtonClicked clicked")
                 this.$store.state.esm = !this.$store.state.esm
-                this.bus.$emit('showHideEsm', this.$store.state.esm)
+                this.$xEventBus.$emit('showHideEsm', this.$store.state.esm)
             },
 
             tradesButtonClicked() {
                 console.log("==> Header::tradesButtonClicked clicked")
                 this.$store.state.trades = !this.$store.state.trades
-                this.bus.$emit('showHideTrades', this.$store.state.trades)
+                this.$xEventBus.$emit('showHideTrades', this.$store.state.trades)
             },
 
             inspectButtonClicked() {
